@@ -4,7 +4,6 @@ import tkinter as tk
 import tkinter.font as TkFont
 from PIL import ImageTk,Image
 
-
 ##################################################################
 # VARIABLES
 ##################################################################
@@ -52,11 +51,12 @@ def create_canvas_2_disp(canvas, texts, design):
     # pack
     canvas.pack()
 
-def create_canvas_img(canvas, texts, design, imgs, id):
+def create_canvas_img(canvas, texts, design, imgs, correct_imgid):
     """ input: canvas, texts(two titles), design(logo, title_font, text_font, title_font_game), imgs(list of image_triples)
         creates game screen from which to guess the images
     """
     # choose images set randomly
+    #image_set = imgs[sets_used % len(imgs)]
     image_set = choice(imgs)
 
     # clear canvas
@@ -68,7 +68,7 @@ def create_canvas_img(canvas, texts, design, imgs, id):
     canvas.create_image(img_pos[0][0], img_pos[0][1], anchor=NW, image=image_set[0])
     canvas.create_image(img_pos[1][0], img_pos[1][1], anchor=NW, image=image_set[1])
     canvas.create_image(img_pos[2][0], img_pos[2][1], anchor=NW, image=image_set[2])
-    canvas.create_rectangle(img_pos[id][0] - 5, img_pos[id][1] - 5, rectangle_pos[id][0] + 4, rectangle_pos[id][1] + 4, width = 5, outline = "green")
+    canvas.create_rectangle(img_pos[correct_imgid][0] - 5, img_pos[correct_imgid][1] - 5, rectangle_pos[correct_imgid][0] + 4, rectangle_pos[correct_imgid][1] + 4, width = 5, outline = "green")
     canvas.create_text(img_pos[0][0] + 100, img_pos[0][1] + 310, text = "A", font = design[2])
     canvas.create_text(img_pos[1][0] + 100, img_pos[1][1] + 310, text = "B", font = design[2])
     canvas.create_text(img_pos[2][0] + 100, img_pos[2][1] + 310, text = "C", font = design[2])
