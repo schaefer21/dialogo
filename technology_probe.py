@@ -23,6 +23,19 @@ tree = [ImageTk.PhotoImage(Image.open("imgs/tree/tree1.png").resize(img_size)),
 sun = [ImageTk.PhotoImage(Image.open("imgs/sun/sun1.png").resize(img_size)),
        ImageTk.PhotoImage(Image.open("imgs/sun/sun2.png").resize(img_size)),
        ImageTk.PhotoImage(Image.open("imgs/sun/sun3.png").resize(img_size))]
+dog = [ImageTk.PhotoImage(Image.open("imgs/dog/dog1.png").resize(img_size)),
+       ImageTk.PhotoImage(Image.open("imgs/dog/dog2.png").resize(img_size)),
+       ImageTk.PhotoImage(Image.open("imgs/dog/dog3.png").resize(img_size))]
+fish = [ImageTk.PhotoImage(Image.open("imgs/fish/fish1.png").resize(img_size)),
+       ImageTk.PhotoImage(Image.open("imgs/fish/fish2.png").resize(img_size)),
+       ImageTk.PhotoImage(Image.open("imgs/fish/fish3.png").resize(img_size))]
+flower = [ImageTk.PhotoImage(Image.open("imgs/flower/flower1.png").resize(img_size)),
+       ImageTk.PhotoImage(Image.open("imgs/flower/flower2.png").resize(img_size)),
+       ImageTk.PhotoImage(Image.open("imgs/flower/flower3.png").resize(img_size))]
+house = [ImageTk.PhotoImage(Image.open("imgs/house/house1.png").resize(img_size)),
+       ImageTk.PhotoImage(Image.open("imgs/house/house2.png").resize(img_size)),
+       ImageTk.PhotoImage(Image.open("imgs/house/house3.png").resize(img_size))]
+imgs = [tree, sun, dog, fish, flower, house] # can be used to pick randomly from the image sets
 imgs = [tree, sun] # can be used to pick randomly from the image sets
 shuffle_imgs = []
 
