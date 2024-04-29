@@ -7,7 +7,7 @@ import threading
 import random
 import tkinter.font as TkFont
 from PIL import ImageTk,Image
-from texts import create_canvas, create_canvas_2_disp, create_canvas_img, texts_stage_0, texts_stage_1, texts_stage_2, texts_stage_3, bg_color
+from texts import canvas_img_game, canvas_expl_two_disp, canvas_expl, canvas_hand_over, canvas_expl_buttons, canvas_end_slide, texts_stage_0, texts_stage_1, texts_stage_2, texts_stage_3, bg_color
 
 # master
 master = Tk()
@@ -36,7 +36,6 @@ house = [ImageTk.PhotoImage(Image.open("imgs/house/house1.png").resize(img_size)
        ImageTk.PhotoImage(Image.open("imgs/house/house2.png").resize(img_size)),
        ImageTk.PhotoImage(Image.open("imgs/house/house3.png").resize(img_size))]
 imgs = [tree, sun, dog, fish, flower, house] # can be used to pick randomly from the image sets
-imgs = [tree, sun] # can be used to pick randomly from the image sets
 shuffle_imgs = []
 
 # design variables
@@ -79,7 +78,7 @@ def add_score():
 
 def next_task():
     correct_img_id = random.randint(0,2)
-    create_canvas_img(canvas, texts_stage_1["image_game"], design_aspects, shuffle_imgs, correct_img_id)
+    canvas_img_game(canvas, texts_stage_1["image_game"], design_aspects, shuffle_imgs, correct_img_id)
     # sets_used += 1
     #print(sets_used)
 
@@ -97,20 +96,22 @@ while True:
     while (stage == 0):
 
         # START FRAME
-        create_canvas(canvas, texts_stage_0["start_frame"][0], texts_stage_0["start_frame"][1], design_aspects)
+        canvas_expl(canvas, texts_stage_0["start_frame"][0], texts_stage_0["start_frame"][1], design_aspects)
 
         # EXPLANATION
         if explanation_stage == 1:
-            create_canvas(canvas, texts_stage_0["explanation"][0], texts_stage_0["explanation"][1], design_aspects)
+            canvas_expl(canvas, texts_stage_0["explanation"][0], texts_stage_0["explanation"][1], design_aspects)
         if explanation_stage == 2:
-            create_canvas(canvas, texts_stage_0["explanation_of_buttons"][0], texts_stage_0["explanation_of_buttons"][1], design_aspects)
+            canvas_expl(canvas, texts_stage_0["explanation_of_buttons"][0], texts_stage_0["explanation_of_buttons"][1], design_aspects)
         if explanation_stage == 3:
-            create_canvas(canvas, texts_stage_0["group_building"][0], texts_stage_0["group_building"][1], design_aspects)
+            canvas_expl(canvas, texts_stage_0["group_building"][0], texts_stage_0["group_building"][1], design_aspects)
         if explanation_stage == 4:
-            create_canvas(canvas, texts_stage_0["first_group_starts"][0], texts_stage_0["first_group_starts"][1], design_aspects)
+            canvas_expl(canvas, texts_stage_0["first_group_starts"][0], texts_stage_0["first_group_starts"][1], design_aspects)
         if explanation_stage == 5:
-            create_canvas(canvas, texts_stage_0["the_game_is"][0], texts_stage_0["the_game_is"][1], design_aspects)
-        if explanation_stage == 6:  
+            canvas_expl(canvas, texts_stage_0["the_game_is"][0], texts_stage_0["the_game_is"][1], design_aspects)
+        if explanation_stage == 6:
+            canvas_expl_two_disp(canvas, texts_stage_1["guesser_and_explainer"], design_aspects)
+        if explanation_stage == 7:  
             explanation_stage = -1 #for transition - should be in last stage
 
         #transision to next stage after last explaination
@@ -137,7 +138,7 @@ while True:
          # set first task
         #choose a random id for the correct image
         
-        create_canvas_2_disp(canvas, texts_stage_1["guesser_and_explainer"], design_aspects)
+        
         # CHANGE WITH BUTTON FUNCTIONALITY
         next_task()
         #timer
@@ -217,7 +218,9 @@ while True:
     # HAND OVER STAGE
     while stage == 2:
         print("stage 2")
+        score_of_round = 0 # CHANGE TO CURRENT GAINED POINTS
         #include canvas for hand over here with scores
+        canvas_hand_over(canvas, texts_stage_2["other_team_turn"], design_aspects, score_of_round)
         
         if continue_last == GPIO.LOW and GPIO.input(button_continue) == GPIO.HIGH:
             if rounds > 0:
@@ -234,6 +237,7 @@ while True:
     while stage == 3:
         print("stage 3")
         # SHOWING GAME RESULTS
+        canvas_end_slide(canvas, texts_stage_3["end_screen"], design_aspects, score)
         # show final screen canvas here 
         
         # transfer to stage 0 again 

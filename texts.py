@@ -13,6 +13,7 @@ title_pos_left = [50, 130]
 text_pos_left = [50, 200]
 title_game_pos_left = [190, 22]
 shift = 800
+shift_y = 40
 
 ##################################################################
 # FUNCTIONS
@@ -20,10 +21,7 @@ shift = 800
 img_pos = [[40, 100], [300, 100], [560, 100]]
 rectangle_pos = [[240, 390], [500, 390], [760, 390]]
 
-def rect_around_img(canvas, id):
-    canvas.create_rectangle()
-
-def create_canvas(canvas, title, subtitle, design):
+def canvas_expl(canvas, title, subtitle, design):
     canvas.delete("all")
     canvas.create_image(15, 15, anchor=NW, image=design[0])
     canvas.create_text(title_pos_left[0], title_pos_left[1], text = title, anchor= NW, width=625, font = design[1])
@@ -37,7 +35,7 @@ def create_canvas(canvas, title, subtitle, design):
     # pack
     canvas.pack()
 
-def create_canvas_2_disp(canvas, texts, design):
+def canvas_expl_two_disp(canvas, texts, design):
     canvas.delete("all")
     canvas.create_image(15, 15, anchor=NW, image=design[0])
     canvas.create_text(title_pos_left[0], title_pos_left[1], text = texts[0], anchor= NW, width=625, font = design[1])
@@ -51,7 +49,7 @@ def create_canvas_2_disp(canvas, texts, design):
     # pack
     canvas.pack()
 
-def create_canvas_img(canvas, texts, design, imgs, correct_imgid):
+def canvas_img_game(canvas, texts, design, imgs, correct_img_id):
     """ input: canvas, texts(two titles), design(logo, title_font, text_font, title_font_game), imgs(list of image_triples)
         creates game screen from which to guess the images
     """
@@ -68,7 +66,7 @@ def create_canvas_img(canvas, texts, design, imgs, correct_imgid):
     canvas.create_image(img_pos[0][0], img_pos[0][1], anchor=NW, image=image_set[0])
     canvas.create_image(img_pos[1][0], img_pos[1][1], anchor=NW, image=image_set[1])
     canvas.create_image(img_pos[2][0], img_pos[2][1], anchor=NW, image=image_set[2])
-    canvas.create_rectangle(img_pos[correct_imgid][0] - 5, img_pos[correct_imgid][1] - 5, rectangle_pos[correct_imgid][0] + 4, rectangle_pos[correct_imgid][1] + 4, width = 5, outline = "green")
+    canvas.create_rectangle(img_pos[correct_img_id][0] - 5, img_pos[correct_img_id][1] - 5, rectangle_pos[correct_img_id][0] + 4, rectangle_pos[correct_img_id][1] + 4, width = 5, outline = "green")
     canvas.create_text(img_pos[0][0] + 100, img_pos[0][1] + 310, text = "A", font = design[2])
     canvas.create_text(img_pos[1][0] + 100, img_pos[1][1] + 310, text = "B", font = design[2])
     canvas.create_text(img_pos[2][0] + 100, img_pos[2][1] + 310, text = "C", font = design[2])
@@ -86,6 +84,58 @@ def create_canvas_img(canvas, texts, design, imgs, correct_imgid):
     canvas.create_text(img_pos[1][0] + 100 + shift, img_pos[1][1] + 310, text = "B", font = design[2])
     canvas.create_text(img_pos[2][0] + 100 + shift, img_pos[2][1] + 310, text = "C", font = design[2])
     
+    # pack
+    canvas.pack()
+
+def canvas_expl_buttons():
+    print()
+
+def canvas_hand_over(canvas, texts, design, score_of_round):
+    canvas.delete("all")
+    canvas.create_image(15, 15, anchor=NW, image=design[0])
+    canvas.create_text(title_pos_left[0], title_pos_left[1], text = texts[0], anchor= NW, width=625, font = design[1])
+    canvas.create_text(text_pos_left[0], text_pos_left[1], text = texts[1] + str(score_of_round) + texts[2], anchor= NW, width=625, font = design[2])
+    canvas.create_text(text_pos_left[0], text_pos_left[1] + shift_y, text = texts[3], anchor= NW, width=625, font = design[2])
+    canvas.create_text(text_pos_left[0], text_pos_left[1] + shift_y * 2, text = texts[4], anchor= NW, width=625, font = design[2])
+
+     # line
+    canvas.create_line(800, 0, 800, 480, fill="black", width = 2)
+    # right display
+    canvas.create_image(15 + shift, 15, anchor=NW, image=design[0])
+    canvas.create_text(title_pos_left[0] + shift, title_pos_left[1], text = texts[0], anchor= NW, width=625, font = design[1])
+    canvas.create_text(text_pos_left[0] + shift, text_pos_left[1], text = texts[1] + str(score_of_round) + texts[2], anchor= NW, width=625, font = design[2])
+    canvas.create_text(text_pos_left[0] + shift, text_pos_left[1] + shift_y, text = texts[3], anchor= NW, width=625, font = design[2])
+    canvas.create_text(text_pos_left[0] + shift, text_pos_left[1] + shift_y * 2, text = texts[4], anchor= NW, width=625, font = design[2])
+    # pack
+    canvas.pack()
+
+def canvas_end_slide(canvas, texts, design, score):
+    # clear canvas
+    canvas.delete("all")    
+
+    # first display
+    canvas.create_image(15, 15, anchor=NW, image=design[0]) # logo
+    canvas.create_text(title_pos_left[0], title_pos_left[1], text = texts[0], anchor= NW, width=625, font = design[1])
+    canvas.create_text(text_pos_left[0], text_pos_left[1], text = texts[1] + str(score[0]) + " Punkte.", anchor= NW, width=625, font = design[2])
+    canvas.create_text(text_pos_left[0], text_pos_left[1] + shift_y, text = texts[2] + str(score[1]) + " Punkte.", anchor= NW, width=625, font = design[2])
+    
+    # separation line
+    canvas.create_line(800, 0, 800, 480, fill="black", width = 2)
+
+    # second display
+    canvas.create_image(15 + shift, 15, anchor=NW, image=design[0]) #logo
+    canvas.create_text(title_pos_left[0] + shift, title_pos_left[1], text = texts[0], anchor= NW, width=625, font = design[1])
+    canvas.create_text(text_pos_left[0] + shift, text_pos_left[1], text = texts[1] + str(score[0]) + " Punkte.", anchor= NW, width=625, font = design[2])
+    canvas.create_text(text_pos_left[0] + shift, text_pos_left[1] + shift_y, text = texts[2] + str(score[1]) + " Punkte.", anchor= NW, width=625, font = design[2])
+
+    # score
+    if score[0] == score[1]:
+        canvas.create_text(text_pos_left[0], text_pos_left[1] + shift_y * 2, text = texts[3] + str(1 if score[0]>score[1] else 2)  + "!", anchor= NW, width=625, font = design[2])
+        canvas.create_text(text_pos_left[0] + shift, text_pos_left[1] + shift_y * 2, text = texts[3] + str(1 if score[0]>score[1] else 2) + "!", anchor= NW, width=625, font = design[2])
+    else:
+        canvas.create_text(text_pos_left[0], text_pos_left[1] + shift_y * 2, text = "Es ist Unentschieden!", anchor= NW, width=625, font = design[2])
+        canvas.create_text(text_pos_left[0] + shift, text_pos_left[1] + shift_y * 2, text = "Es ist Unentschieden!", anchor= NW, width=625, font = design[2])
+
     # pack
     canvas.pack()
 
@@ -118,13 +168,18 @@ texts_stage_1 = {
 }
 
 texts_stage_2 = {
-    "other_team_turn": ["vd",
-                    "sfde"]
+    "other_team_turn": ["Eure Zeit ist um!",
+                    "Ihr habt ",
+                    " Punkte bekommen.",
+                    "Jetzt ist das andere Team dran.",
+                    "Gibt das Dialogo dem anderen Team :)"]
 }
 
 texts_stage_3 = {
-    "end_screen": ["vd",
-                    "sfde"]
+    "end_screen": ["Das Spiel ist vorbei!",
+                    "Gruppe 1 hat ",
+                    "Gruppe 2 hat ", 
+                    "Glückwunsch an Gruppe "]
 }
 
 # Stage 0
