@@ -61,7 +61,7 @@ wrong_last = GPIO.HIGH
 continue_last = GPIO.HIGH
 
 # logic variables
-stage = 1 # {0, 1, 2} as the stages
+stage = 0 # {0, 1, 2} as the stages
 explanation_stage = 0 # {0, ...} as the explanations stages
 task_stage = 0 # which images are shown
 
