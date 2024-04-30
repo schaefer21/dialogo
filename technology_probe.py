@@ -61,36 +61,45 @@ wrong_last = GPIO.HIGH
 continue_last = GPIO.HIGH
 
 # logic variables
-stage = 0 # {0, 1, 2} as the stages
+stage = 1 # {0, 1, 2} as the stages
 explanation_stage = 0 # {0, ...} as the explanations stages
 task_stage = 0 # which images are shown
 
-#game variables
+# game variables
 rounds = 2 # even number so that every tea has same amount of rounds
 round_time = 10.00 #round time in seconds
 team = 1 # or 2
 score = [0,0]
 #sets_used = 0
+sec = 0
+timer_style = 0 # 0 or 1,  0...text timer 1...red circle timer
 
 def add_score():
     score[team - 1] += 1
 # GPIO.add_event_detect(button_right, GPIO.RISING, callback= add_score)
 
-def next_task():
+def next_task(): #functionality for getting new task
     correct_img_id = random.randint(0,2)
-    canvas_img_game(canvas, texts_stage_1["image_game"], design_aspects, shuffle_imgs, correct_img_id)
+    canvas_img_game(canvas, texts_stage_1["image_game"], design_aspects, shuffle_imgs, correct_img_id, score)
     # sets_used += 1
     #print(sets_used)
-
     print("next task")
-    #functionality for getting new task
 
-while True:
+def update_timer(sec_left):
+    if(timer_style == 1): # red circle timer  
+        extend = int(360 / round_time * (sec))
+        canvas.create_arc(730, 10, 790, 70, start=0, extent=extend, fill="red", outline= "red" )
+    else: # text
+        canvas.create_rectangle(730, 60, 790 , 30, fill = "white" , outline = "white")
+        canvas.create_text(750, 30, text = str(sec_left), anchor= NW, width=625, font = design_aspects[3])
+    canvas.pack
     
+while True:
+
     # shuffle imgs
     shuffle_imgs = imgs
     random.shuffle(shuffle_imgs)
-    
+
     print("stage 0")
     # EXPLANATION STAGE
     while (stage == 0):
@@ -111,7 +120,8 @@ while True:
             canvas_expl(canvas, texts_stage_0["the_game_is"][0], texts_stage_0["the_game_is"][1], design_aspects)
         if explanation_stage == 6:
             canvas_expl_two_disp(canvas, texts_stage_1["guesser_and_explainer"], design_aspects)
-        if explanation_stage == 7:  
+        if explanation_stage == 7:
+            canvas.delete("all")
             explanation_stage = -1 #for transition - should be in last stage
 
         #transision to next stage after last explaination
@@ -130,65 +140,70 @@ while True:
         # UPDATE THE WINDOW
         master.update()
 
-        # SWITCH FROM EXPLANATION STAGE TO EXPLANATION STAGE WHEN CONTINUE CLICKED
 
     # GAME STAGE
     while stage == 1:
         print("stage 1 - game Stage")
          # set first task
-        #choose a random id for the correct image
-        
-        
-        # CHANGE WITH BUTTON FUNCTIONALITY
         next_task()
-        #timer
-        canvas.create_arc(730, 10, 790, 70, start=0, extent=359.9, fill="white", outline= "red" )
+
+        # visual timer
+        # canvas.create_arc(730, 10, 790, 70, start=0, extent= 359.99, width = 3, fill="white", outline= "red" )
         canvas.pack
-        
+
         # set timer
-        p = round_time
-        alarm = time.time() + p
+        guessing_time = round_time
+        alarm = time.time() + guessing_time
+        last_time = int(time.time())
+        sec = 0
         # set button logic
         right_last = GPIO.HIGH
         wrong_last = GPIO.HIGH
         continue_last = GPIO.HIGH
-        
+
         #-----game loop------
         while True:
-            n = time.time()
-            if n <= alarm:
-                print(round(alarm - n))
-
+            current_time = time.time()
+            if current_time <= alarm:
+                print(round(alarm - current_time))
+                # print(str(int(time.time() % 100)))
+                
                 # button_right clicked
                 if right_last == GPIO.LOW and GPIO.input(button_right) == GPIO.HIGH:
                     add_score()
                     next_task()
-
+                    update_timer(int(alarm - current_time))
+                    
                 # wrong button clicked
                 if wrong_last == GPIO.LOW and GPIO.input(button_wrong) == GPIO.HIGH:
                     next_task()
-
+                    update_timer(int(alarm - current_time))
+                    
                 # continue button clicked
                 if continue_last == GPIO.LOW and GPIO.input(button_continue) == GPIO.HIGH:
                     next_task()
-
+                    update_timer(int(alarm - current_time))
+                    
                 # update button logic for next frame
                 right_last = GPIO.input(button_right)
                 wrong_last = GPIO.input(button_wrong)
                 continue_last = GPIO.input(button_continue)
+
+               
+               # update visual timer each second 
+                if(last_time < int(current_time)):
+                    print("here")
+                    sec += 1
+                    update_timer(int(alarm - current_time))                  
+                last_time = int(current_time)
                 
-                # TODO: timer
                 # iterator = 0
-                # if (round(n) == round(alarm - (round_time/6 * (6-iterator)))):
+                # if (round(current_time) == round(alarm - (round_time/6 * (6-iterator)))):
                 #   canvas.create_rectangle(100 + 100* iterator, 100, 200, 200, width = 5, outline = "green")
                 #   canvas.pack()
                 #   print("here")
                 #   iterator += 1
-                
-                #if (round(n) % 10 == 0):
-                #    extend = round(360 / round_time * (n))
-                #    canvas.create_arc(730, 10, 790, 70, start=0, extent=extend, fill="red", outline= "red" )
-                #    canvas.pack
+
             else:
                 print("Time's up!")
                 break
@@ -199,12 +214,6 @@ while True:
 
         # update rounds
         rounds -= 1
-
-        # change team
-        if (team == 1):
-            team = 2
-        else:
-            team = 1
 
         # switch to hand over stage
         stage = 2
@@ -218,29 +227,37 @@ while True:
     # HAND OVER STAGE
     while stage == 2:
         print("stage 2")
-        score_of_round = 0 # CHANGE TO CURRENT GAINED POINTS
+        score_of_round = score[team-1]
+
         #include canvas for hand over here with scores
         canvas_hand_over(canvas, texts_stage_2["other_team_turn"], design_aspects, score_of_round)
-        
+
         if continue_last == GPIO.LOW and GPIO.input(button_continue) == GPIO.HIGH:
+            # change team
+            if (team == 1):
+                team = 2
+            else:
+                team = 1
+
+            #transfer to right stage
             if rounds > 0:
                 stage = 1 # game stage
             elif rounds == 0:
                 stage = 3 # final stage
                 continue_last = GPIO.HIGH
-                
+
         continue_last = GPIO.input(button_continue)
         # UPDATE THE WINDOW
         master.update()
-        
+
     # FINAL STAGE
     while stage == 3:
         print("stage 3")
         # SHOWING GAME RESULTS
         canvas_end_slide(canvas, texts_stage_3["end_screen"], design_aspects, score)
-        # show final screen canvas here 
-        
-        # transfer to stage 0 again 
+        # show final screen canvas here
+
+        # transfer to stage 0 again
         if continue_last == GPIO.LOW and GPIO.input(button_continue) == GPIO.HIGH:
             stage = 0
             score = [0,0]
@@ -252,10 +269,10 @@ while True:
             task_stage = 0 # which images are shown
             rounds = 4
             team = 1
-            
+
         continue_last = GPIO.input(button_continue)
         # UPDATE THE WINDOW
         master.update()
 
-      
+
 

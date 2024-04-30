@@ -12,6 +12,7 @@ bg_color = "#FFFFFF"
 title_pos_left = [50, 130]
 text_pos_left = [50, 200]
 title_game_pos_left = [190, 22]
+score_pos_left = [50, 430]
 shift = 800
 shift_y = 40
 
@@ -49,7 +50,7 @@ def canvas_expl_two_disp(canvas, texts, design):
     # pack
     canvas.pack()
 
-def canvas_img_game(canvas, texts, design, imgs, correct_img_id):
+def canvas_img_game(canvas, texts, design, imgs, correct_img_id, score):
     """ input: canvas, texts(two titles), design(logo, title_font, text_font, title_font_game), imgs(list of image_triples)
         creates game screen from which to guess the images
     """
@@ -83,6 +84,10 @@ def canvas_img_game(canvas, texts, design, imgs, correct_img_id):
     canvas.create_text(img_pos[0][0] + 100 + shift, img_pos[0][1] + 310, text = "A", font = design[2])
     canvas.create_text(img_pos[1][0] + 100 + shift, img_pos[1][1] + 310, text = "B", font = design[2])
     canvas.create_text(img_pos[2][0] + 100 + shift, img_pos[2][1] + 310, text = "C", font = design[2])
+    
+    # score
+    canvas.create_text(score_pos_left[0], score_pos_left[1], text = str(score[0]) + " : " + str(score[1]), anchor= NW, width=625, font = design[2])
+    canvas.create_text(score_pos_left[0] + shift, score_pos_left[1], text = str(score[0]) + " : " + str(score[1]), anchor= NW, width=625, font = design[2])
     
     # pack
     canvas.pack()
@@ -129,7 +134,7 @@ def canvas_end_slide(canvas, texts, design, score):
     canvas.create_text(text_pos_left[0] + shift, text_pos_left[1] + shift_y, text = texts[2] + str(score[1]) + " Punkte.", anchor= NW, width=625, font = design[2])
 
     # score
-    if score[0] == score[1]:
+    if score[0] != score[1]:
         canvas.create_text(text_pos_left[0], text_pos_left[1] + shift_y * 2, text = texts[3] + str(1 if score[0]>score[1] else 2)  + "!", anchor= NW, width=625, font = design[2])
         canvas.create_text(text_pos_left[0] + shift, text_pos_left[1] + shift_y * 2, text = texts[3] + str(1 if score[0]>score[1] else 2) + "!", anchor= NW, width=625, font = design[2])
     else:
@@ -139,6 +144,7 @@ def canvas_end_slide(canvas, texts, design, score):
     # pack
     canvas.pack()
 
+    
 ##################################################################
 # TEXTS
 ##################################################################
