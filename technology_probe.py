@@ -10,9 +10,24 @@ from PIL import ImageTk,Image
 from texts import canvas_img_game, canvas_expl_two_disp, canvas_expl, canvas_hand_over, canvas_expl_buttons, canvas_end_slide, texts_stage_0, texts_stage_1, texts_stage_2, texts_stage_3, bg_color
 
 # master
-master = Tk()
-master.geometry("1600x480") # pixels
-master.title("Dialogo")
+root = Tk()
+w0, h0 = 800, 480
+w1, h1 = 800, 480
+
+# hdmi0
+win0 = tk.Toplevel()
+win0.geometry(f"{w0}x{h0}+0+0")
+win0.attributes("-fullscreen", True)
+
+# hdmi1
+win1 = tk.Toplevel()
+win1.geometry(f"{w1}x{h1}+{w0}+0")
+win1.attributes("-fullscreen", True)
+
+root.withdraw()
+
+#master.geometry("1600x480") # pixels
+#master.title("Dialogo")
 
 # import images
 img_size = (200, 290)
@@ -45,7 +60,9 @@ title_font_game = TkFont.Font(family="Segoe UI", size=20, weight="bold")
 design_aspects = [logo, title_font, text_font, title_font_game]
 
 # initialize canvas
-canvas = Canvas(master, width = 1600, height = 480, bg = bg_color)
+canvas = Canvas(win0, width = 1600, height = 480, bg = bg_color)
+canvas = Canvas(win0, width = 1600, height = 480, bg = bg_color)
+
 
 # button variables
 button_right = 12 # GREEN
@@ -138,7 +155,8 @@ while True:
         continue_last = GPIO.input(button_continue)
 
         # UPDATE THE WINDOW
-        master.update()
+        win0.update()
+        win1.update()
 
 
     # GAME STAGE
@@ -209,7 +227,9 @@ while True:
                 break
             sleep(0.10)
             # UPDATE THE WINDOW
-            master.update()
+            #master.update()
+            win0.update()
+            win1.update()
         # -----game loop done-----
 
         # update rounds
