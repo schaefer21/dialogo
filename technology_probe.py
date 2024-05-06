@@ -6,6 +6,7 @@ import time
 import threading
 import random
 import tkinter.font as TkFont
+from random import choice
 from PIL import ImageTk,Image
 from texts import canvas_img_game, canvas_expl_two_disp, canvas_expl, canvas_hand_over, canvas_expl_buttons, canvas_end_slide, texts_stage_0, texts_stage_1, texts_stage_2, texts_stage_3, bg_color
 
@@ -15,12 +16,12 @@ w0, h0 = 800, 480
 w1, h1 = 800, 480
 
 # hdmi0
-win0 = tk.Toplevel()
+win0 = tk.Toplevel(root)
 win0.geometry(f"{w0}x{h0}+0+0")
 win0.attributes("-fullscreen", True)
 
 # hdmi1
-win1 = tk.Toplevel()
+win1 = tk.Toplevel(root)
 win1.geometry(f"{w1}x{h1}+{w0}+0")
 win1.attributes("-fullscreen", True)
 
@@ -61,8 +62,9 @@ design_aspects = [logo, title_font, text_font, title_font_game]
 
 # initialize canvas
 canvas = Canvas(win0, width = 1600, height = 480, bg = bg_color)
-canvas = Canvas(win0, width = 1600, height = 480, bg = bg_color)
-
+canvas1 = Canvas(win1, width = 1600, height = 480, bg = bg_color)
+canvas.pack()
+canvas1.pack()
 
 # button variables
 button_right = 12 # GREEN
@@ -84,7 +86,7 @@ task_stage = 0 # which images are shown
 
 # game variables
 rounds = 2 # even number so that every tea has same amount of rounds
-round_time = 10.00 #round time in seconds
+round_time = 60.00 #round time in seconds
 team = 1 # or 2
 score = [0,0]
 #sets_used = 0
@@ -96,8 +98,15 @@ def add_score():
 # GPIO.add_event_detect(button_right, GPIO.RISING, callback= add_score)
 
 def next_task(): #functionality for getting new task
+    # choose correct image randomly
     correct_img_id = random.randint(0,2)
-    canvas_img_game(canvas, texts_stage_1["image_game"], design_aspects, shuffle_imgs, correct_img_id, score)
+    
+    # choose images set randomly
+    image_set = choice(imgs)
+    
+    canvas_img_game("left", canvas, texts_stage_1["image_game"], design_aspects, image_set, correct_img_id, score)
+    canvas_img_game("right", canvas1, texts_stage_1["image_game"], design_aspects, image_set, correct_img_id, score)
+
     # sets_used += 1
     #print(sets_used)
     print("next task")
@@ -109,8 +118,8 @@ def update_timer(sec_left):
     else: # text
         canvas.create_rectangle(730, 60, 790 , 30, fill = "white" , outline = "white")
         canvas.create_text(750, 30, text = str(sec_left), anchor= NW, width=625, font = design_aspects[3])
-    canvas.pack
-    
+    #canvas.pack()
+#     
 while True:
 
     # shuffle imgs
@@ -123,22 +132,33 @@ while True:
 
         # START FRAME
         canvas_expl(canvas, texts_stage_0["start_frame"][0], texts_stage_0["start_frame"][1], design_aspects)
+        canvas_expl(canvas1, texts_stage_0["start_frame"][0], texts_stage_0["start_frame"][1], design_aspects)
 
         # EXPLANATION
         if explanation_stage == 1:
             canvas_expl(canvas, texts_stage_0["explanation"][0], texts_stage_0["explanation"][1], design_aspects)
+            canvas_expl(canvas1, texts_stage_0["explanation"][0], texts_stage_0["explanation"][1], design_aspects)
         if explanation_stage == 2:
-            canvas_expl(canvas, texts_stage_0["explanation_of_buttons"][0], texts_stage_0["explanation_of_buttons"][1], design_aspects)
+            #canvas_expl(canvas, texts_stage_0["explanation_of_buttons"][0], texts_stage_0["explanation_of_buttons"][1], design_aspects)
+            #canvas_expl(canvas1, texts_stage_0["explanation_of_buttons"][0], texts_stage_0["explanation_of_buttons"][1], design_aspects)
+            canvas_expl_buttons(canvas, texts_stage_0["explanation_of_buttons"][0], texts_stage_0["explanation_of_buttons"][1], design_aspects)
+            canvas_expl_buttons(canvas1, texts_stage_0["explanation_of_buttons"][0], texts_stage_0["explanation_of_buttons"][1], design_aspects)
+
         if explanation_stage == 3:
             canvas_expl(canvas, texts_stage_0["group_building"][0], texts_stage_0["group_building"][1], design_aspects)
+            canvas_expl(canvas1, texts_stage_0["group_building"][0], texts_stage_0["group_building"][1], design_aspects)
         if explanation_stage == 4:
             canvas_expl(canvas, texts_stage_0["first_group_starts"][0], texts_stage_0["first_group_starts"][1], design_aspects)
+            canvas_expl(canvas1, texts_stage_0["first_group_starts"][0], texts_stage_0["first_group_starts"][1], design_aspects)
         if explanation_stage == 5:
             canvas_expl(canvas, texts_stage_0["the_game_is"][0], texts_stage_0["the_game_is"][1], design_aspects)
+            canvas_expl(canvas1, texts_stage_0["the_game_is"][0], texts_stage_0["the_game_is"][1], design_aspects)
         if explanation_stage == 6:
-            canvas_expl_two_disp(canvas, texts_stage_1["guesser_and_explainer"], design_aspects)
+            canvas_expl_two_disp("left", canvas, texts_stage_1["guesser_and_explainer"], design_aspects)
+            canvas_expl_two_disp("right", canvas1, texts_stage_1["guesser_and_explainer"], design_aspects)
         if explanation_stage == 7:
             canvas.delete("all")
+            canvas1.delete("all")
             explanation_stage = -1 #for transition - should be in last stage
 
         #transision to next stage after last explaination
@@ -157,6 +177,7 @@ while True:
         # UPDATE THE WINDOW
         win0.update()
         win1.update()
+        root.update()
 
 
     # GAME STAGE
@@ -167,7 +188,7 @@ while True:
 
         # visual timer
         # canvas.create_arc(730, 10, 790, 70, start=0, extent= 359.99, width = 3, fill="white", outline= "red" )
-        canvas.pack
+        #canvas.pack()
 
         # set timer
         guessing_time = round_time
@@ -218,7 +239,7 @@ while True:
                 # iterator = 0
                 # if (round(current_time) == round(alarm - (round_time/6 * (6-iterator)))):
                 #   canvas.create_rectangle(100 + 100* iterator, 100, 200, 200, width = 5, outline = "green")
-                #   canvas.pack()
+                #   #canvas.pack()()
                 #   print("here")
                 #   iterator += 1
 
@@ -227,9 +248,10 @@ while True:
                 break
             sleep(0.10)
             # UPDATE THE WINDOW
-            #master.update()
+            # UPDATE THE WINDOW
             win0.update()
             win1.update()
+            root.update()
         # -----game loop done-----
 
         # update rounds
@@ -251,7 +273,9 @@ while True:
 
         #include canvas for hand over here with scores
         canvas_hand_over(canvas, texts_stage_2["other_team_turn"], design_aspects, score_of_round)
+        canvas_hand_over(canvas1, texts_stage_2["other_team_turn"], design_aspects, score_of_round)
 
+        
         if continue_last == GPIO.LOW and GPIO.input(button_continue) == GPIO.HIGH:
             # change team
             if (team == 1):
@@ -268,13 +292,17 @@ while True:
 
         continue_last = GPIO.input(button_continue)
         # UPDATE THE WINDOW
-        master.update()
+        win0.update()
+        win1.update()
+        root.update()
 
     # FINAL STAGE
     while stage == 3:
         print("stage 3")
         # SHOWING GAME RESULTS
         canvas_end_slide(canvas, texts_stage_3["end_screen"], design_aspects, score)
+        canvas_end_slide(canvas1, texts_stage_3["end_screen"], design_aspects, score)
+
         # show final screen canvas here
 
         # transfer to stage 0 again
@@ -292,7 +320,9 @@ while True:
 
         continue_last = GPIO.input(button_continue)
         # UPDATE THE WINDOW
-        master.update()
+        win0.update()
+        win1.update()
+        root.update()
 
 
 
