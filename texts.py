@@ -161,13 +161,18 @@ texts_stage_1 = {
     "image_game": ["Beschreibe das markierte Bild!",
                     "Ratet, welches Bild das Richtige ist!"]
 }
-
+#placeholders --> change !!!
 texts_stage_2 = {
-    "other_team_turn": ["Eure Zeit ist um!",
+     "round_scores": ["Eure Zeit ist um!",
                     "Ihr habt ",
                     " Punkte bekommen.",
-                    "Jetzt ist das andere Team dran.",
-                    "Gibt das Dialogo dem anderen Team :)"]
+                    "xxxxxxx.",
+                    "-----------"],
+    "other_team_turn": ["Ihr seit das andere Team! right?",
+                    "hahaha ",
+                    " lol.",
+                    "jajajaja.",
+                    "Ihr seit jetzt dran!"]
 }
 
 texts_stage_3 = {

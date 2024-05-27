@@ -83,6 +83,7 @@ continue_last = GPIO.HIGH
 stage = 0 # {0, 1, 2} as the stages
 explanation_stage = 0 # {0, ...} as the explanations stages
 task_stage = 0 # which images are shown
+handOver_stage = 0 # stage of handover
 
 # game variables
 rounds = 2 # even number so that every team has same amount of rounds
@@ -274,16 +275,22 @@ while True:
     while stage == 2:
         print("stage 2")
         score_of_round = score[team-1]
-
-        #include canvas for displaying round scores 
-        canvas_hand_over(canvas, texts_stage_2["other_team_turn"], design_aspects, score_of_round)
-        canvas_hand_over(canvas1, texts_stage_2["other_team_turn"], design_aspects, score_of_round)
-		
-		# toDo wait for button click
-		
-		# show true handover canvas (which teams turn it is)
         
-        if continue_last == GPIO.LOW and GPIO.input(button_continue) == GPIO.HIGH:
+        if handOver_stage == 0:
+        #include canvas for displaying round scores 
+            canvas_hand_over(canvas, texts_stage_2["round_scores"], design_aspects, score_of_round)
+            canvas_hand_over(canvas1, texts_stage_2["round_scores"], design_aspects, score_of_round)
+        
+        if handOver_stage == 1:
+        # ToDO: show true handover canvas (which teams turn it is)
+            print("give device other team")
+            canvas_hand_over(canvas, texts_stage_2["other_team_turn"], design_aspects, score_of_round)
+            canvas_hand_over(canvas1, texts_stage_2["other_team_turn"], design_aspects, score_of_round)
+            
+        if handOver_stage == 2:
+            print("switching stage")
+            #reset handOver stage
+            handOver_stage = 0
             # change team
             if (team == 1):
                 team = 2
@@ -295,8 +302,13 @@ while True:
                 stage = 1 # game stage
             elif rounds == 0:
                 stage = 3 # final stage
-                continue_last = GPIO.HIGH
-
+            continue_last = GPIO.HIGH
+                
+        # button check
+        if continue_last == GPIO.LOW and GPIO.input(button_continue) == GPIO.HIGH:
+            handOver_stage += 1
+            print("continue")
+        
         continue_last = GPIO.input(button_continue)
         # UPDATE THE WINDOW
         win0.update()
