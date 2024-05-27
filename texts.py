@@ -22,6 +22,17 @@ shift_y = 40
 img_pos = [[40, 80], [300, 80], [560, 80]]
 rectangle_pos = [[240, 370], [500, 370], [760, 370]]
 
+# Start Canvas (refine)
+# Explanation of Teams (new function)
+# Explanation of Buttons (use button function, but two displays differently)
+# Hand Over (change handover slide with bg)
+# Show Game Mode (new function with bg and icon)
+# Game Loop: 
+#   Image Game (exists)
+#   Word Game (new function)
+# Time Over Score (new function)
+# End Screen (exists)
+
 def canvas_expl(canvas, title, subtitle, design):
     canvas.delete("all")
     canvas.create_image(15, 15, anchor=NW, image=design[0])
@@ -29,7 +40,8 @@ def canvas_expl(canvas, title, subtitle, design):
     canvas.create_text(text_pos_left[0], text_pos_left[1], text = subtitle, anchor= NW, width=625, font = design[2])
 
 def canvas_expl_two_disp(left_or_right, canvas, texts, design):
-    canvas.delete("all")
+    canvas.delete("all") 
+    canvas.configure(bg = bg_color)
     if left_or_right == "left":
         # left display
         canvas.create_image(15, 15, anchor=NW, image=design[0])
@@ -92,6 +104,7 @@ def canvas_expl_buttons(canvas, title, subtitle, design):
     canvas.create_text(img_pos[2][0] + 100, img_pos[2][1] + 310, text = "Richtig", font = design[2])
          
 
+# todo: rework habd over canvas
 def canvas_hand_over(canvas, texts, design, score_of_round):
     canvas.delete("all")
     canvas.create_image(15, 15, anchor=NW, image=design[0])
@@ -163,18 +176,3 @@ texts_stage_3 = {
                     "Gruppe 2 hat ", 
                     "Glückwunsch an Gruppe "]
 }
-
-# Stage 0
-#### start_frame
-#### explanation
-#### explanation_of_buttons
-#### group_building
-#### first_group_starts
-#### the_game_is
-# Stage 1
-#### guesser_and_explainer
-#### image_game
-# Stage 2
-#### other_team_turn
-# Stage 3
-#### end_screen

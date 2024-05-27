@@ -85,8 +85,8 @@ explanation_stage = 0 # {0, ...} as the explanations stages
 task_stage = 0 # which images are shown
 
 # game variables
-rounds = 2 # even number so that every tea has same amount of rounds
-round_time = 60.00 #round time in seconds
+rounds = 2 # even number so that every team has same amount of rounds
+round_time = 10.00 #round time in seconds
 team = 1 # or 2
 score = [0,0]
 #sets_used = 0
@@ -104,6 +104,7 @@ def next_task(): #functionality for getting new task
     # choose images set randomly
     image_set = choice(imgs)
     
+    # here either picture guessing task or word taks depending on active game_mode
     canvas_img_game("left", canvas, texts_stage_1["image_game"], design_aspects, image_set, correct_img_id, score)
     canvas_img_game("right", canvas1, texts_stage_1["image_game"], design_aspects, image_set, correct_img_id, score)
 
@@ -112,12 +113,15 @@ def next_task(): #functionality for getting new task
     print("next task")
 
 def update_timer(sec_left):
-    if(timer_style == 1): # red circle timer  
+    if(timer_style == 1): # red circle timer  # here the third bar visualizaion 
         extend = int(360 / round_time * (sec))
         canvas.create_arc(730, 10, 790, 70, start=0, extent=extend, fill="red", outline= "red" )
+        canvas1.create_arc(730, 10, 790, 70, start=0, extent=extend, fill="red", outline= "red" )
     else: # text
         canvas.create_rectangle(730, 60, 790 , 30, fill = "white" , outline = "white")
         canvas.create_text(750, 30, text = str(sec_left), anchor= NW, width=625, font = design_aspects[3])
+        canvas1.create_rectangle(730, 60, 790 , 30, fill = "white" , outline = "white")
+        canvas1.create_text(750, 30, text = str(sec_left), anchor= NW, width=625, font = design_aspects[3])
     #canvas.pack()
 #     
 while True:
@@ -271,10 +275,13 @@ while True:
         print("stage 2")
         score_of_round = score[team-1]
 
-        #include canvas for hand over here with scores
+        #include canvas for displaying round scores 
         canvas_hand_over(canvas, texts_stage_2["other_team_turn"], design_aspects, score_of_round)
         canvas_hand_over(canvas1, texts_stage_2["other_team_turn"], design_aspects, score_of_round)
-
+		
+		# toDo wait for button click
+		
+		# show true handover canvas (which teams turn it is)
         
         if continue_last == GPIO.LOW and GPIO.input(button_continue) == GPIO.HIGH:
             # change team
