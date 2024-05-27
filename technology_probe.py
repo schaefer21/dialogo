@@ -86,10 +86,12 @@ task_stage = 0 # which images are shown
 handOver_stage = 0 # stage of handover
 
 # game variables
-rounds = 2 # even number so that every team has same amount of rounds
+rounds = 4 # even number so that every team has same amount of rounds
 round_time = 10.00 #round time in seconds
 team = 1 # or 2
 score = [0,0]
+game_mode = "picture" # or "word" 
+
 #sets_used = 0
 sec = 0
 timer_style = 0 # 0 or 1,  0...text timer 1...red circle timer
@@ -99,16 +101,20 @@ def add_score():
 # GPIO.add_event_detect(button_right, GPIO.RISING, callback= add_score)
 
 def next_task(): #functionality for getting new task
-    # choose correct image randomly
-    correct_img_id = random.randint(0,2)
+   
+    # different task dependent on current game_mode 
+    if game_mode == "picture":
+        # choose correct image randomly
+        correct_img_id = random.randint(0,2)
+        # choose images set randomly
+        image_set = choice(imgs)
+        canvas_img_game("left", canvas, texts_stage_1["image_game"], design_aspects, image_set, correct_img_id, score)
+        canvas_img_game("right", canvas1, texts_stage_1["image_game"], design_aspects, image_set, correct_img_id, score)
     
-    # choose images set randomly
-    image_set = choice(imgs)
-    
-    # here either picture guessing task or word taks depending on active game_mode
-    canvas_img_game("left", canvas, texts_stage_1["image_game"], design_aspects, image_set, correct_img_id, score)
-    canvas_img_game("right", canvas1, texts_stage_1["image_game"], design_aspects, image_set, correct_img_id, score)
-
+    elif game_mode == "word":
+        #TODO: insert word task call here!!!
+        print("placeholder pls delete") # only here so that code compiles haha
+        
     # sets_used += 1
     #print(sets_used)
     print("next task")
@@ -187,14 +193,34 @@ while True:
 
     # GAME STAGE
     while stage == 1:
+        # pre game stage
+        print ("pre-game_stage")
+        # decide on game mode:
+        # every two rounds decide randomly on next game_mode for the next two rounds
+        if (float(rounds) % 2 == 0):
+            game_mode = "picture" # TODO: here make random
+            print("change game_mode")
+            
+        # show game card
+        while True:
+            if game_mode == "picture":
+                canvas_expl(canvas, texts_stage_0["the_game_is"][0], texts_stage_0["the_game_is"][1], design_aspects)
+                canvas_expl(canvas1, texts_stage_0["the_game_is"][0], texts_stage_0["the_game_is"][1], design_aspects)
+            elif game_mode == "word":
+                print("placeholder please delete") # only here for program to compile
+                
+            win0.update()
+            win1.update()
+            root.update()
+            if continue_last == GPIO.LOW and GPIO.input(button_continue) == GPIO.HIGH:
+                break # not pretty but esiest way
+            continue_last = GPIO.input(button_continue)
+        
+        # prepare game
         print("stage 1 - game Stage")
          # set first task
         next_task()
-
-        # visual timer
-        # canvas.create_arc(730, 10, 790, 70, start=0, extent= 359.99, width = 3, fill="white", outline= "red" )
-        #canvas.pack()
-
+        
         # set timer
         guessing_time = round_time
         alarm = time.time() + guessing_time
@@ -283,10 +309,15 @@ while True:
         
         if handOver_stage == 1:
         # ToDO: show true handover canvas (which teams turn it is)
-            print("give device other team")
-            canvas_hand_over(canvas, texts_stage_2["other_team_turn"], design_aspects, score_of_round)
-            canvas_hand_over(canvas1, texts_stage_2["other_team_turn"], design_aspects, score_of_round)
-            
+            if rounds > 0:
+                print("give device other team")
+                canvas_hand_over(canvas, texts_stage_2["other_team_turn"], design_aspects, score_of_round)
+                canvas_hand_over(canvas1, texts_stage_2["other_team_turn"], design_aspects, score_of_round)
+                
+            else:
+                stage = 3 # final stage
+                continue_last = GPIO.HIGH
+                
         if handOver_stage == 2:
             print("switching stage")
             #reset handOver stage
@@ -334,6 +365,7 @@ while True:
             stage = 0 # {0, 1, 2} as the stages
             explanation_stage = 0 # {0, ...} as the explanations stages
             task_stage = 0 # which images are shown
+            handOver_stage = 0
             rounds = 4
             team = 1
 
